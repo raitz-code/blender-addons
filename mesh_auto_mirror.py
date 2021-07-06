@@ -126,6 +126,10 @@ class AutoMirror(bpy.types.Operator):
         loc = context.object.location
         bpy.ops.object.mode_set(mode = "OBJECT") # Needed to avoid to translate vertices
 
+        # Unlock location to allow tranlating
+        loc_locks = list(context.object.lock_location)
+        context.object.lock_location = [False, False, False]
+
         v1 = Vector((loc[0],loc[1],loc[2]))
         bpy.ops.transform.translate(value = (X*orientation, Y*orientation, Z*orientation),
                                         constraint_axis = ((X==1), (Y==1), (Z==1)),
@@ -134,6 +138,8 @@ class AutoMirror(bpy.types.Operator):
         bpy.ops.transform.translate(value = (-X*orientation, -Y*orientation, -Z*orientation),
                                         constraint_axis = ((X==1), (Y==1), (Z==1)),
                                         orient_type = 'LOCAL')
+
+        context.object.lock_location = loc_locks
 
         bpy.ops.object.mode_set(mode="EDIT")
         return v2-v1
